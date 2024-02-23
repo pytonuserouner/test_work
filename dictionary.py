@@ -2,31 +2,81 @@ import pandas as pd
 import csv
 
 
-def control_func() -> None:
+# def control_func() -> None:
+#     """
+#     Управляющая функция, реализует выбор действий пользователя
+#     :return: None
+#     """
+#     while True:
+#         print("\nМеню для управления справочником. Выберите желаемое действие")
+#         user_val = input("1 - создать запись\n2 - изменить запись\n3 - найти запись\n"
+#                          "4 - вывести список записей в справочнике\n5 - выйти из программы\n")
+#         if user_val == '1':
+#             create_record()
+#         elif user_val == '2':
+#             change_record()
+#         elif user_val == '3':
+#             for i in seeker():
+#                 print(i)
+#         elif user_val == '4':
+#             with open("data.csv", encoding="windows-1251") as reader_file:
+#                 reader_data = csv.reader(reader_file, delimiter=";")
+#                 for row in reader_data:
+#                     print(row)
+#         elif user_val == '5':
+#             break
+#         else:
+#             print("Вы ошиблись с выбором, попробуйте еще раз\n")
+
+
+def new_control_func() -> None:
     """
     Управляющая функция, реализует выбор действий пользователя
     :return: None
     """
+    control_dict = {
+        1: create_record,
+        2: change_record,
+        3: read_find_record,
+        4: read_record,
+        5: False,
+    }
     while True:
         print("\nМеню для управления справочником. Выберите желаемое действие")
         user_val = input("1 - создать запись\n2 - изменить запись\n3 - найти запись\n"
                          "4 - вывести список записей в справочнике\n5 - выйти из программы\n")
-        if user_val == '1':
-            create_record()
-        elif user_val == '2':
-            change_record()
-        elif user_val == '3':
-            for i in seeker():
-                print(i)
-        elif user_val == '4':
-            with open("data.csv", encoding="windows-1251") as reader_file:
-                reader_data = csv.reader(reader_file, delimiter=";")
-                for row in reader_data:
-                    print(row)
-        elif user_val == '5':
+        try:
+            control_dict.get(int(user_val))()
+        except:
             break
-        else:
-            print("Вы ошиблись с выбором, попробуйте еще раз\n")
+
+
+def read_record() -> None:
+    """
+    Выводим список записей из справочника.
+    :return: None
+    """
+    with open("data.csv", encoding="windows-1251") as reader_file:
+        reader_data = csv.reader(reader_file, delimiter=";")
+        for row in reader_data:
+            print(row)
+
+
+def read_find_record() -> None:
+    """
+    Выводим список записей из справочника по заданному ключевому слову.
+    :return: None
+    """
+    for i in seeker():
+        print(i)
+
+
+def exit_program() -> bool:
+    """
+    Выходим из программы
+    :return: bool
+    """
+    return False
 
 
 def create_record() -> None:
@@ -55,19 +105,19 @@ def change_record() -> None:
     :return: None
     """
     mid_list = []
-    middle_val = seeker()   # Присваиваем переменной результат поиска записи
+    middle_val = seeker()  # Присваиваем переменной результат поиска записи
     print(f"Найдены следующие записи:\n{list(middle_val)}")
     if len(middle_val) > 1:
         print("Уточните ваш запрос")
-        change_record()     # Выбор записи для изменения
+        change_record()  # Выбор записи для изменения
     else:
         print("Создайте новую запись")
-        create_record()     # Создание новой записи
-        with open("data.csv", mode='r', encoding='windows-1251') as reader:     # Отсеиваем ненужную запись
+        create_record()  # Создание новой записи
+        with open("data.csv", mode='r', encoding='windows-1251') as reader:  # Отсеиваем ненужную запись
             for row in reader.readlines():
                 if ";".join(middle_val[0]) not in row:
                     mid_list.append(row)
-        with open("data.csv", mode='w', encoding="windows-1251") as new_reader:     # Переписываем справочник
+        with open("data.csv", mode='w', encoding="windows-1251") as new_reader:  # Переписываем справочник
             for new_row in mid_list:
                 new_reader.write(new_row)
         # pd.read_csv("data.csv", encoding='windows-1251').drop(x, axis=0)
@@ -83,8 +133,8 @@ def seeker() -> list:
     with open("data.csv", encoding="windows-1251") as reader_file:
         reader_data = csv.reader(reader_file, delimiter=";")
         for row in reader_data:
-            if seek_value.capitalize() in row or seek_value in row:     # Отсев по заданному значению
-                rez_list.append(row)     # Запись найденной записи в список
+            if seek_value.capitalize() in row or seek_value in row:  # Отсев по заданному значению
+                rez_list.append(row)  # Запись найденной записи в список
         if len(rez_list) == 0:
             print("Такой записи в справочнике нет")
         else:
@@ -92,4 +142,5 @@ def seeker() -> list:
 
 
 if __name__ == '__main__':
-    control_func()
+    # control_func()
+    new_control_func()
